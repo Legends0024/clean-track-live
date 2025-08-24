@@ -17,43 +17,143 @@ import CleanerDashboard from './features/dashboard/CleanerDashboard';
 import SupervisorDashboard from './features/dashboard/SupervisorDashboard';
 import NHAIDashboard from './features/dashboard/NHAIDashboard';
 
-// App Content Component (needs to be inside Provider)
-const AppContent: React.FC = () => {
-  const { isAuthenticated, user } = useAuth();
+// Import layout and lazy-loaded pages
+import RootLayout from '@/components/layout/RootLayout';
+import {
+  LazyPage,
+  ProfilePageLazy,
+  SettingsPageLazy,
+  ReportsPageLazy,
+  HelpPageLazy,
+  TaskDetailsPageLazy,
+} from '@/components/layout/LazyPage';
 
+// Import additional lazy-loaded pages
+const SchedulePage = React.lazy(() => import('@/pages/SchedulePage'));
+const TeamOverviewPage = React.lazy(() => import('@/pages/TeamOverviewPage'));
+const LocationMapPage = React.lazy(() => import('@/pages/LocationMapPage'));
+const DocsPage = React.lazy(() => import('@/pages/DocsPage'));
+
+const App: React.FC = () => {
   return (
-    <TooltipProvider>
-      <AnimatePresence mode="wait">
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Homepage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          
-          {/* Role-based Dashboard Routes */}
+    <Provider store={store}>
+      <BrowserRouter>
+        <TooltipProvider>
+          <AnimatePresence mode="wait">
+            <Routes>
+              <Route element={<RootLayout />}>
+                {/* Public Routes */}
+                <Route index element={<Homepage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+
+                {/* Role-based Dashboard Routes */}
+                <Route
+                  path="/cleaner/*"
+                  element={
+                    <ProtectedRoute roles={['cleaner']}>
+                      <CleanerDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/supervisor/*"
+                  element={
+                    <ProtectedRoute roles={['supervisor']}>
+                      <SupervisorDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/nhai/*"
+                  element={
+                    <ProtectedRoute roles={['nhai']}>
+                      <NHAIDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
+          {/* Common Protected Routes */}
           <Route
-            path="/cleaner/*"
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <LazyPage component={ProfilePageLazy} />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <LazyPage component={SettingsPageLazy} />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/help"
+            element={
+              <ProtectedRoute>
+                <LazyPage component={HelpPageLazy} />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/tasks/:taskId"
+            element={
+              <ProtectedRoute>
+                <LazyPage component={TaskDetailsPageLazy} />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Cleaner-specific Routes */}
+          <Route
+            path="/cleaner/schedule"
             element={
               <ProtectedRoute roles={['cleaner']}>
-                <CleanerDashboard />
+                <LazyPage component={SchedulePage} />
               </ProtectedRoute>
             }
           />
-          
+
+          {/* Supervisor-specific Routes */}
           <Route
-            path="/supervisor/*"
+            path="/supervisor/team"
             element={
               <ProtectedRoute roles={['supervisor']}>
-                <SupervisorDashboard />
+                <LazyPage component={TeamOverviewPage} />
               </ProtectedRoute>
             }
           />
-          
           <Route
-            path="/nhai/*"
+            path="/supervisor/map"
+            element={
+              <ProtectedRoute roles={['supervisor']}>
+                <LazyPage component={LocationMapPage} />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* NHAI-specific Routes */}
+          <Route
+            path="/nhai/reports"
             element={
               <ProtectedRoute roles={['nhai']}>
-                <NHAIDashboard />
+                <LazyPage component={ReportsPageLazy} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/nhai/docs"
+            element={
+              <ProtectedRoute roles={['nhai']}>
+                <LazyPage component={DocsPage} />
               </ProtectedRoute>
             }
           />
@@ -111,7 +211,9 @@ const App: React.FC = () => {
   return (
     <Provider store={store}>
       <BrowserRouter>
-        <AppContent />
+        <RootLayout>
+          <AppContent />
+        </RootLayout>
       </BrowserRouter>
     </Provider>
   );

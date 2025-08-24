@@ -1,21 +1,38 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import { 
-  Droplets, 
+  ChevronRight,
   Shield, 
   Activity, 
-  Users, 
-  ArrowRight, 
-  CheckCircle, 
   BarChart3,
-  Smartphone,
-  Clock,
-  Globe
+  CheckCircle
 } from 'lucide-react';
-import { Button } from '../components/ui/Button';
+import { Button } from '@/components/ui/Button';
+
+const stats = [
+  {
+    value: '500+',
+    label: 'Facilities Monitored',
+  },
+  {
+    value: '99.2%',
+    label: 'System Uptime',
+  },
+  {
+    value: '50K+',
+    label: 'Daily Users',
+  },
+  {
+    value: '4.8/5',
+    label: 'User Rating',
+  },
+];
 
 const Homepage: React.FC = () => {
+  const { isAuthenticated, user } = useAuth();
+  
   const features = [
     {
       icon: <Activity className="h-8 w-8" />,

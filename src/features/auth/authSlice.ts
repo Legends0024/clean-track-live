@@ -53,6 +53,31 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+export const updateProfile = createAsyncThunk(
+  'auth/updateProfile',
+  async (profileData: {
+    name: string;
+    email: string;
+    avatar?: string;
+    currentPassword?: string;
+    newPassword?: string;
+  }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.patch('/users/me', profileData);
+      
+      if (response.success && response.data) {
+        return response.data;
+      }
+      
+      return rejectWithValue('Failed to update profile');
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to update profile'
+      );
+    }
+  }
+);
+
 export const fetchCurrentUser = createAsyncThunk(
   'auth/fetchMe',
   async (_, { rejectWithValue }) => {

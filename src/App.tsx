@@ -9,7 +9,9 @@ import { store } from './store/store';
 import { useAuth } from './hooks/useAuth';
 
 // Import pages and components
+import Homepage from './pages/Homepage';
 import LoginPage from './features/auth/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import CleanerDashboard from './features/dashboard/CleanerDashboard';
 import SupervisorDashboard from './features/dashboard/SupervisorDashboard';
@@ -24,7 +26,9 @@ const AppContent: React.FC = () => {
       <AnimatePresence mode="wait">
         <Routes>
           {/* Public Routes */}
+          <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           
           {/* Role-based Dashboard Routes */}
           <Route
@@ -54,9 +58,9 @@ const AppContent: React.FC = () => {
             }
           />
 
-          {/* Root Route - Redirect to appropriate dashboard */}
+          {/* Dashboard Redirect Route */}
           <Route
-            path="/"
+            path="/dashboard"
             element={
               isAuthenticated && user ? (
                 <Navigate to={`/${user.role}`} replace />

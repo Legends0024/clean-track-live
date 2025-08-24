@@ -30,7 +30,7 @@ const SupervisorDashboard: React.FC = () => {
   const { tasks } = useAppSelector((state) => state.tasks);
 
   useEffect(() => {
-    dispatch(fetchTasks());
+    dispatch(fetchTasks(undefined));
   }, [dispatch]);
 
   // Calculate metrics
